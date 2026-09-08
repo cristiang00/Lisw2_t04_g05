@@ -1,0 +1,179 @@
+package co.edu.unicauca.bancopreguntas.presentation.views;
+
+import co.edu.unicauca.bancopreguntas.domain.entities.Question;
+import co.edu.unicauca.bancopreguntas.domain.entities.QuestionState;
+import co.edu.unicauca.bancopreguntas.presentation.controllers.QuestionController;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
+/**
+ * Vista principal de la aplicación.
+ * Permite seleccionar una pregunta y cambiar su estado.
+ */
+public class MainView extends JFrame {
+
+    private final QuestionController controller;
+
+    private JComboBox<Question> questionComboBox;
+    private JTextField txtId;
+    private JTextField txtName;
+    private JTextArea txtQuestion;
+    private JTextArea txtOptions;
+    private JTextField txtCorrectAnswer;
+    private JTextField txtCurrentState;
+    private JComboBox<QuestionState> stateComboBox;
+    private JButton btnLoad;
+    private JButton btnUpdate;
+
+    public MainView(QuestionController controller) {
+        this.controller = controller;
+        initComponents();
+        loadInitialData();
+    }
+
+    private void initComponents() {
+        setTitle("Banco de Preguntas Saber PRO");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 600);
+        setLayout(new BorderLayout(10, 10));
+
+        // Panel superior: Selección
+        JPanel pnlSelection = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pnlSelection.setBorder(BorderFactory.createTitledBorder("Seleccionar Pregunta"));
+        
+        questionComboBox = new JComboBox<>();
+        btnLoad = new JButton("Cargar pregunta");
+        
+        pnlSelection.add(new JLabel("Pregunta:"));
+        pnlSelection.add(questionComboBox);
+        pnlSelection.add(btnLoad);
+
+        add(pnlSelection, BorderLayout.NORTH);
+
+        // Panel central: Formulario
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBorder(BorderFactory.createTitledBorder("Formulario de Pregunta"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Fila 0
+        gbc.gridx = 0; gbc.gridy = 0;
+        pnlForm.add(new JLabel("Id:"), gbc);
+        gbc.gridx = 1;
+        txtId = new JTextField(20);
+        txtId.setEditable(false);
+        pnlForm.add(txtId, gbc);
+
+        // Fila 1
+        gbc.gridx = 0; gbc.gridy = 1;
+        pnlForm.add(new JLabel("Nombre:"), gbc);
+        gbc.gridx = 1;
+        txtName = new JTextField(20);
+        txtName.setEditable(false);
+        pnlForm.add(txtName, gbc);
+
+        // Fila 2
+        gbc.gridx = 0; gbc.gridy = 2;
+        pnlForm.add(new JLabel("Pregunta:"), gbc);
+        gbc.gridx = 1;
+        txtQuestion = new JTextArea(3, 20);
+        txtQuestion.setEditable(false);
+        txtQuestion.setLineWrap(true);
+        pnlForm.add(new JScrollPane(txtQuestion), gbc);
+
+        // Fila 3
+        gbc.gridx = 0; gbc.gridy = 3;
+        pnlForm.add(new JLabel("Opciones:"), gbc);
+        gbc.gridx = 1;
+        txtOptions = new JTextArea(4, 20);
+        txtOptions.setEditable(false);
+        pnlForm.add(new JScrollPane(txtOptions), gbc);
+
+        // Fila 4
+        gbc.gridx = 0; gbc.gridy = 4;
+        pnlForm.add(new JLabel("Respuesta Correcta:"), gbc);
+        gbc.gridx = 1;
+        txtCorrectAnswer = new JTextField(20);
+        txtCorrectAnswer.setEditable(false);
+        pnlForm.add(txtCorrectAnswer, gbc);
+
+        // Fila 5
+        gbc.gridx = 0; gbc.gridy = 5;
+        pnlForm.add(new JLabel("Estado actual:"), gbc);
+        gbc.gridx = 1;
+        txtCurrentState = new JTextField(20);
+        txtCurrentState.setEditable(false);
+        pnlForm.add(txtCurrentState, gbc);
+
+        // Fila 6
+        gbc.gridx = 0; gbc.gridy = 6;
+        pnlForm.add(new JLabel("Nuevo estado:"), gbc);
+        gbc.gridx = 1;
+        stateComboBox = new JComboBox<>(QuestionState.values());
+        stateComboBox.setEnabled(false);
+        pnlForm.add(stateComboBox, gbc);
+
+        add(pnlForm, BorderLayout.CENTER);
+
+        // Panel inferior: Botón actualizar
+        JPanel pnlBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        btnUpdate = new JButton("Actualizar estado");
+        btnUpdate.setEnabled(false);
+        pnlBottom.add(btnUpdate);
+
+        add(pnlBottom, BorderLayout.SOUTH);
+
+        // Eventos
+        btnLoad.addActionListener(e -> loadQuestionDetails());
+        btnUpdate.addActionListener(e -> updateQuestionState());
+    }
+
+    private void loadInitialData() {
+        List<Question> questions = controller.loadQuestions();
+        for (Question q : questions) {
+            questionComboBox.addItem(q);
+        }
+    }
+
+    private void loadQuestionDetails() {
+        Question selected = (Question) questionComboBox.getSelectedItem();
+        if (selected != null) {
+            // Obtenemos la última versión de la pregunta desde el controlador
+            Question q = controller.getQuestion(selected.getId());
+            
+            txtId.setText(q.getId());
+            txtName.setText(q.getName());
+            txtQuestion.setText(q.getQuestionText());
+            
+            StringBuilder opts = new StringBuilder();
+            for (String opt : q.getOptions()) {
+                opts.append(opt).append("\n");
+            }
+            txtOptions.setText(opts.toString());
+            
+            txtCorrectAnswer.setText(q.getCorrectAnswer());
+            txtCurrentState.setText(q.getState().getLabel());
+            
+            stateComboBox.setSelectedItem(q.getState());
+            
+            stateComboBox.setEnabled(true);
+            btnUpdate.setEnabled(true);
+        }
+    }
+
+    private void updateQuestionState() {
+        Question selected = (Question) questionComboBox.getSelectedItem();
+        QuestionState newState = (QuestionState) stateComboBox.getSelectedItem();
+        
+        if (selected != null && newState != null) {
+            controller.changeQuestionState(selected.getId(), newState);
+            JOptionPane.showMessageDialog(this, "Estado actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            // Recargar detalles para reflejar el cambio en la vista principal
+            loadQuestionDetails();
+        }
+    }
+}
