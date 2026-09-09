@@ -61,58 +61,72 @@ public class MainView extends JFrame {
         gbc.anchor = GridBagConstraints.WEST;
 
         // Fila 0
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
         pnlForm.add(new JLabel("Id:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         txtId = new JTextField(20);
         txtId.setEditable(false);
         pnlForm.add(txtId, gbc);
 
         // Fila 1
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
         pnlForm.add(new JLabel("Nombre:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         txtName = new JTextField(20);
         txtName.setEditable(false);
         pnlForm.add(txtName, gbc);
 
         // Fila 2
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         pnlForm.add(new JLabel("Pregunta:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 0.4;
         txtQuestion = new JTextArea(3, 20);
         txtQuestion.setEditable(false);
         txtQuestion.setLineWrap(true);
-        pnlForm.add(new JScrollPane(txtQuestion), gbc);
+        JScrollPane spQuestion = new JScrollPane(txtQuestion);
+        spQuestion.setMinimumSize(new Dimension(200, 60));
+        spQuestion.setPreferredSize(new Dimension(250, 70));
+        pnlForm.add(spQuestion, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
 
         // Fila 3
-        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
         pnlForm.add(new JLabel("Opciones:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH; gbc.weighty = 0.6;
         txtOptions = new JTextArea(4, 20);
         txtOptions.setEditable(false);
-        pnlForm.add(new JScrollPane(txtOptions), gbc);
+        JScrollPane spOptions = new JScrollPane(txtOptions);
+        spOptions.setMinimumSize(new Dimension(200, 80));
+        spOptions.setPreferredSize(new Dimension(250, 90));
+        pnlForm.add(spOptions, gbc);
+        gbc.fill = GridBagConstraints.HORIZONTAL; gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.WEST;
 
         // Fila 4
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0;
         pnlForm.add(new JLabel("Respuesta Correcta:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         txtCorrectAnswer = new JTextField(20);
         txtCorrectAnswer.setEditable(false);
         pnlForm.add(txtCorrectAnswer, gbc);
 
         // Fila 5
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 5; gbc.weightx = 0;
         pnlForm.add(new JLabel("Estado actual:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         txtCurrentState = new JTextField(20);
         txtCurrentState.setEditable(false);
         pnlForm.add(txtCurrentState, gbc);
 
         // Fila 6
-        gbc.gridx = 0; gbc.gridy = 6;
+        gbc.gridx = 0; gbc.gridy = 6; gbc.weightx = 0;
         pnlForm.add(new JLabel("Nuevo estado:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 1; gbc.weightx = 1.0;
         stateComboBox = new JComboBox<>(QuestionState.values());
         stateComboBox.setEnabled(false);
         pnlForm.add(stateComboBox, gbc);
